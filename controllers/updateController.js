@@ -11,12 +11,15 @@ const signUp = require('../models/signUp');
 
 const updateData = async (req, res) => {
   const userId = req.params.userId;
+ 
   try {
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+ 
 
     const clientPayload = req.body;
 
@@ -88,12 +91,20 @@ const updateData = async (req, res) => {
 
 const user = async (req, res) => {
   const userId = req.body.userName;
+  const userPassword = req.body.password;
+
+
   try {
-    const users = await signUp.find({ "phone": userId });
+    const users = await signUp.find({ "email": userId });
 
     if (users.length === 0) {
       return res.status(401).json({ message: 'User does not exist.' });
     }
+
+    if (users[0].password !== userPassword) {
+      return res.status(404).json({ message: "Wrong passcode" });
+    }
+
     res.json(users)
   } catch (error) {
     console.error('Error creating config:', error);
