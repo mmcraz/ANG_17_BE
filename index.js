@@ -11,7 +11,7 @@ const { saveDeviceData, getAllUserDeviceData } = require('./controllers/deviceDa
 const { clientData, getUsersByClientName } = require('./controllers/dashboardController');
 const { getUserEvents, dateFilter, getweeklyData, getmonthlyData } = require('./controllers/dateController');
 const { signUpUser } = require('./controllers/signUpController');
-const { saveOrders, getOrders }= require('./controllers/ordersController');
+const { saveOrders, getOrders, deleteOrder }= require('./controllers/ordersController');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,6 +28,7 @@ app.post('/login', user)
 app.post('/signUp', signUpUser)
 app.post('/saveOrders', saveOrders)
 app.get('/getOrdersList:userId', getOrders)
+app.delete('/delete:userId', deleteOrder)
 
 app.post('/updateUserEvents/:userId', updateData)  
 app.get('/getUsersData', getUsersData)

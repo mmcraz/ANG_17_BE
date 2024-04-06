@@ -33,4 +33,23 @@ const getOrders = async (req , res) => {
     }
 }
 
-module.exports = {saveOrders, getOrders};
+const deleteOrder = async (req , res) => {
+    try {
+        const orderId = req.params.userId;
+       // const deletedOrder = await orders.findOneAndDelete({ orderId: orderId }); 
+       const isorderId = await orders.findById(orderId);
+       if(isorderId) {
+        isorderId.status = "Cancelled"
+        const savedOrder = await isorderId.save();                 
+       }
+       //const deletedOrder = await orders.findOneAndDelete({ orderId: orderId }); 
+    //    res.status(500).json({message: 'Internal Server Error 500'})
+  
+      
+    } catch (error) {
+        console.log('Error cancelled orders', error)
+        res.status(500).json({message: 'Internal Server Error 500'})
+    }
+}
+
+module.exports = {saveOrders, getOrders, deleteOrder};

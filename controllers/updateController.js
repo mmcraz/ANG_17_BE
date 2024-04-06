@@ -123,4 +123,5 @@ const getUsersData = async (req, res) => {
   }
 };
 
+
 module.exports = { updateData, user, getUsersData };

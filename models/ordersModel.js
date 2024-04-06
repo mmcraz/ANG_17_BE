@@ -7,7 +7,9 @@ const OrdersSchema = new mongoose.Schema({
     text: String,
     space: Number,
     fsize: Number,
-    userId: String
+    userId: String,
+    date: String,
+    status:String
 })
 
 const orders = mongoose.model('orders', OrdersSchema)
