@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const { dbConnection } = require('./server');
 const cors = require('cors');
+require("dotenv").config();
 const { updateData, user, getUsersData } = require('./controllers/updateController');
 const { screenCount, mostViewedPage } = require('./controllers/mostViewed');
 const { mostClickedActions } = require('./controllers/mostClicked');
@@ -13,7 +14,7 @@ const { signUpUser } = require('./controllers/signUpController');
 const { saveOrders, getOrders }= require('./controllers/ordersController');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 //Middleware
 app.use(bodyParser.json());
