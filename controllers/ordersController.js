@@ -24,7 +24,7 @@ const getOrders = async (req , res) => {
        const getOrderList = await orders.find({ "userId": orderId });   
 
         if(!getOrderList.length) {
-            return res.status(422).json({message: 'No Orders found'})
+            return res.status(200).json([])
         }       
         res.json(getOrderList);
     } catch (error) {
@@ -42,6 +42,7 @@ const deleteOrder = async (req , res) => {
         isorderId.status = "Cancelled"
         const savedOrder = await isorderId.save();                 
        }
+       res.json();
        //const deletedOrder = await orders.findOneAndDelete({ orderId: orderId }); 
     //    res.status(500).json({message: 'Internal Server Error 500'})
   
@@ -52,4 +53,16 @@ const deleteOrder = async (req , res) => {
     }
 }
 
-module.exports = {saveOrders, getOrders, deleteOrder};
+const permanentDeleteOrder = async (req , res) => {
+    try {
+        const orderId = req.params.orderId;
+        const deletedOrder = await orders.findOneAndDelete({ _id: orderId }); 
+        console.log('Deleted document:', deletedOrder);
+        res.json();
+    } catch (error) {
+        console.log('Error cancelled orders', error)
+        res.status(500).json({message: 'Internal Server Error 500'})
+    }
+}
+
+module.exports = {saveOrders, getOrders, deleteOrder, permanentDeleteOrder};
