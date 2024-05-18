@@ -6,7 +6,13 @@ const signUpUserSchema = new mongoose.Schema({
     email: String,
     password: String,
     confirmPassword: String,
-    phone: Number
+    phone: Number,
+    addressOne: String,
+    addressTwo: String,
+    city: String,
+    state: String,
+    pin: Number,
+    
 })
 
 const signUpUser = mongoose.model('signUpUser', signUpUserSchema)

@@ -9,7 +9,8 @@ const OrdersSchema = new mongoose.Schema({
     fsize: Number,
     userId: String,
     date: String,
-    status:String
+    status:String,
+    quantity:Number
 })
 
 const orders = mongoose.model('orders', OrdersSchema)

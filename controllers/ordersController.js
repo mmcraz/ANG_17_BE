@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const { mongoose, ObjectId } = require('mongoose');
 const orders = require('../models/ordersModel');
 
 const saveOrders = async (req , res) => {
@@ -33,6 +33,38 @@ const getOrders = async (req , res) => {
     }
 }
 
+const getNewOrders = async (req , res) => {
+    try {
+       const getNewOrderList = await orders.find();   
+
+        if(!getNewOrderList.length) {
+            return res.status(200).json([])
+        }       
+        res.json(getNewOrderList);
+    } catch (error) {
+        console.log('Error fetching orders', error)
+        res.status(500).json({message: 'Internal Server Error 500'})
+    }
+}
+
+const updateStatus = async (req , res) => {
+    try {
+        const orderId = req.body._id; 
+       const updatedOrder = await orders.updateOne(
+        { "_id": req.body._id }, 
+        { "$set" : 
+            {
+                "status": req.body.status   
+             }
+        });
+
+       console.log(`${updatedOrder.modifiedCount} document(s) updated`);
+       res.status(200).json({message: 'Successfully updated'})
+    } catch (error) {
+        console.log('Error fetching orders', error)
+        res.status(500).json({message: 'Internal Server Error 500'})
+    }
+}
 const deleteOrder = async (req , res) => {
     try {
         const orderId = req.params.userId;
@@ -65,4 +97,4 @@ const permanentDeleteOrder = async (req , res) => {
     }
 }
 
-module.exports = {saveOrders, getOrders, deleteOrder, permanentDeleteOrder};
+module.exports = {saveOrders, getOrders, getNewOrders, updateStatus, deleteOrder, permanentDeleteOrder};
