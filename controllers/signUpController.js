@@ -18,4 +18,15 @@ const signUpUser = async (req , res) => {
     }
 }
 
-module.exports = {signUpUser};
+const getUserDetails = async (req , res) => {
+    try {
+        const orderId = req.params.userId;
+        const userData = await signUp.findById({ _id: orderId });       
+        res.status(200).json(userData);
+
+    } catch (error) {
+        console.log('Error while fetching data', error)
+        res.status(500).json({message: 'Internal Server Error 500'})
+    }
+}
+module.exports = {signUpUser, getUserDetails};

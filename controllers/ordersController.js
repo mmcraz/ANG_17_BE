@@ -95,6 +95,8 @@ const permanentDeleteOrder = async (req , res) => {
         console.log('Error cancelled orders', error)
         res.status(500).json({message: 'Internal Server Error 500'})
     }
+
+   
 }
 
 module.exports = {saveOrders, getOrders, getNewOrders, updateStatus, deleteOrder, permanentDeleteOrder};

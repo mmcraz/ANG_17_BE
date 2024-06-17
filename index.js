@@ -10,7 +10,7 @@ const { mapData, getAllMapData } = require('./controllers/mapDataController');
 const { saveDeviceData, getAllUserDeviceData } = require('./controllers/deviceDataController');
 const { clientData, getUsersByClientName } = require('./controllers/dashboardController');
 const { getUserEvents, dateFilter, getweeklyData, getmonthlyData } = require('./controllers/dateController');
-const { signUpUser } = require('./controllers/signUpController');
+const { signUpUser, getUserDetails } = require('./controllers/signUpController');
 const { saveOrders, getOrders, getNewOrders, updateStatus, deleteOrder, permanentDeleteOrder }= require('./controllers/ordersController');
 
 const app = express();
@@ -26,6 +26,8 @@ dbConnection()
 //main api 
 app.post('/login', user) 
 app.post('/signUp', signUpUser)
+app.get('/getUser/:userId', getUserDetails)
+
 app.post('/saveOrders', saveOrders)
 app.get('/getOrdersList/:userId', getOrders)
 app.get('/getNewOrdersList', getNewOrders)
