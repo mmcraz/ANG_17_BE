@@ -1,7 +1,14 @@
 const express = require('express')
 const bodyParser = require('body-parser');
-const { dbConnection } = require('./server');
+const { dbConnection, mongoose } = require('./server');
 const cors = require('cors');
+
+const multer = require('multer');
+const Grid = require('gridfs-stream');
+const axios = require('axios');
+
+const { GridFSBucket } = require('mongodb');
+
 require("dotenv").config();
 const { updateData, user, getUsersData } = require('./controllers/updateController');
 const { screenCount, mostViewedPage } = require('./controllers/mostViewed');
@@ -10,8 +17,9 @@ const { mapData, getAllMapData } = require('./controllers/mapDataController');
 const { saveDeviceData, getAllUserDeviceData } = require('./controllers/deviceDataController');
 const { clientData, getUsersByClientName } = require('./controllers/dashboardController');
 const { getUserEvents, dateFilter, getweeklyData, getmonthlyData } = require('./controllers/dateController');
-const { signUpUser, getUserDetails } = require('./controllers/signUpController');
+const { signUpUser, getUserDetails, verifyRecaptcha } = require('./controllers/signUpController');
 const { saveOrders, getOrders, getNewOrders, updateStatus, deleteOrder, permanentDeleteOrder }= require('./controllers/ordersController');
+const { saveUploads, getImage } = require('./controllers/uploadsController');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,8 +28,34 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors()); 
 
+
 //Database connection
-dbConnection()
+//dbConnection()
+
+
+
+let gfs, bucket;
+
+const initGridFS = async () => {
+  try {
+    const db = await dbConnection();
+    gfs = Grid(db, mongoose.mongo); // Initialize Grid with the db and mongoose.mongo
+    gfs.collection('uploads');
+    bucket = new GridFSBucket(db, { bucketName: 'uploads' });
+    console.log("GridFS initialized successfully");
+  } catch (error) {
+    console.error('Failed to initialize GridFS:', error);
+    process.exit(1); // Exit if initialization fails
+  }
+};
+
+// Initialize GridFS
+initGridFS();
+
+// Create storage engine
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 
 //main api 
 app.post('/login', user) 
@@ -39,28 +73,18 @@ app.delete('/rm/:orderId', permanentDeleteOrder)
 app.post('/updateUserEvents/:userId', updateData)  
 app.get('/getUsersData', getUsersData)
 
-//admin page charts data collection api
-app.get('/screenCount', screenCount)
-app.get('/mostViewedPages/:clientName', mostViewedPage)
-app.get('/mostClickedActions/:clientName', mostClickedActions)
+// Upload endpoint
+app.post('/upload', upload.single('image'), saveUploads);
 
-//new development
-app.post('/saveMapData',mapData)
-app.get('/getAllMapData/:clientName', getAllMapData)
+// Serve images
+app.get('/image/:filename', getImage);
 
-app.post('/saveDeviceData',saveDeviceData)
-app.get('/getAllDeviceData/:clientName', getAllUserDeviceData)
-  
-app.get('/getAllClients',clientData);
-app.get('/getUsersByClientName/:clientName', getUsersByClientName)
+app.post('/verifyCaptcha', verifyRecaptcha)
 
-//date  
-app.get('/getDates/:userId', dateFilter)
-app.get('/getUserEvents/:userId/:date', getUserEvents)
-app.get('/getWeeklyData/:userId', getweeklyData)
-app.get('/getMonthlyData/:userId', getmonthlyData)
 
 //Starting the server
 app.listen(port, () => {
   console.log(`Server is running on localhost:${port}`);
 });
+ 
+module.exports = {gfs};

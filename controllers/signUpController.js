@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const signUp = require('../models/signUp');
+const axios = require('axios');
 
 const signUpUser = async (req , res) => {
     try {
@@ -29,4 +30,28 @@ const getUserDetails = async (req , res) => {
         res.status(500).json({message: 'Internal Server Error 500'})
     }
 }
-module.exports = {signUpUser, getUserDetails};
+
+const verifyRecaptcha = async (req , res) => {
+
+    try {
+    console.log("req.body", req)
+    const token = req.body.token;
+    const secretKey = '6LeXLS4qAAAAAAsPy8WPEDK5O2sQZeNZY1A0nRZ4'; // Replace with your actual secret key
+
+    const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`);
+
+    const { success } = response.data;
+    if (success) {
+        res.json({ success: true });
+      } else {
+        res.json({ success: false, message: 'Failed captcha verification' });
+      }
+  
+} catch (error) { 
+    res.json({ success: false, message: 'Failed captcha verification' });
+}
+}
+
+
+module.exports = {signUpUser, getUserDetails, verifyRecaptcha};

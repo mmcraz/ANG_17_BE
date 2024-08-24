@@ -9,8 +9,8 @@ const signUpUserSchema = new mongoose.Schema({
     phone: Number,
     addressOne: String,
     addressTwo: String,
-    city: String,
-    state: String,
+    // city: String,
+    // state: String,
     pin: Number,
     
 })
